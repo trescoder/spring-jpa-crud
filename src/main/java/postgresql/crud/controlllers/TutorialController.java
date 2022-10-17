@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import postgresql.crud.models.Tutorial;
 import postgresql.crud.repositories.TutorialRepository;
+import postgresql.crud.services.TutorialService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.Optional;
 public class TutorialController {
     @Autowired
     TutorialRepository tutorialRepository;
+    @Autowired
+    TutorialService tutorialService;
 
     @GetMapping("/tutorials")
     public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = false) String title) {
@@ -49,12 +52,7 @@ public class TutorialController {
 
     @PostMapping("/tutorials")
     public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
-        try {
-            Tutorial _tutorial = tutorialRepository.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false));
-            return new ResponseEntity<>(_tutorial, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return this.tutorialService.createTutorial(tutorial);
     }
 
     @PutMapping("/tutorials/{id}")
